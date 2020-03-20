@@ -1,0 +1,68 @@
+{
+    "name": "darkorsa/cordo-core",
+    "description": "Core libraries for Cordo microframework",
+    "license": "MIT",
+    "require": {
+        "ext-redis": "^5.0",
+        "beberlei/assert": "^2.6",
+        "bernard/bernard": "^1.0@dev",
+        "bshaffer/oauth2-server-php": "^1.10",
+        "doctrine/collections": "^1.6",
+        "doctrine/dbal": "^2.9",
+        "doctrine/orm": "~2.6.6",
+        "doctrine/persistence": "~1.2.0",
+        "filp/whoops": "^2.3",
+        "guzzlehttp/psr7": "^1.5",
+        "hassankhan/config": "^2.0",
+        "league/fractal": "^0.17.0",
+        "league/plates": "^3.3",
+        "league/tactician": "^1.0",
+        "league/tactician-bernard": "^0.6.0",
+        "league/tactician-command-events": "^0.6.0",
+        "league/tactician-container": "^2.0",
+        "league/tactician-doctrine": "^1.1",
+        "league/tactician-logger": "^0.10.0",
+        "monolog/monolog": "^1.24",
+        "myclabs/php-enum": "^1.7",
+        "nikic/fast-route": "^1.3",
+        "particle/validator": "^2.3",
+        "php-di/php-di": "^6.0",
+        "psr/http-server-middleware": "^1.0",
+        "ramsey/uuid": "^3.8",
+        "ramsey/uuid-doctrine": "^1.5",
+        "relay/relay": "2.x@dev",
+        "sensiolabs/security-checker": "^6.0",
+        "symfony/console": "^4.2",
+        "symfony/dotenv": "^4.2",
+        "symfony/property-access": "^4.2",
+        "symfony/translation": "^5.0",
+        "symfony/yaml": "^5.0",
+        "laminas/laminas-mail": "^2.10",
+        "laminas/laminas-permissions-acl": "^2.7",
+        "laminas/laminas-servicemanager": "^3.4"
+    },
+    "require-dev": {
+        "nunomaduro/phpinsights": "^1.7",
+        "phpstan/phpstan": "^0.11.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cordo\\Core\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse -l max -c phpstan.neon src tests",
+        "insights": "phpinsights -v",
+        "check-style": "phpcs -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src/",
+        "fix-style": "phpcbf -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src/"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
