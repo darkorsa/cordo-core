@@ -3,7 +3,6 @@
     "description": "Core libraries for Cordo microframework",
     "license": "MIT",
     "require": {
-        "ext-redis": "^5.0",
         "beberlei/assert": "^2.6",
         "bernard/bernard": "^1.0@dev",
         "bshaffer/oauth2-server-php": "^1.10",
@@ -43,7 +42,8 @@
     },
     "require-dev": {
         "nunomaduro/phpinsights": "^1.7",
-        "phpstan/phpstan": "^0.11.2"
+        "phpstan/phpstan": "^0.11.2",
+        "symfony/var-dumper": "^4.2"
     },
     "autoload": {
         "psr-4": {
