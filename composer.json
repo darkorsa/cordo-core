@@ -4,7 +4,7 @@
     "license": "MIT",
     "require": {
         "beberlei/assert": "^2.6",
-        "bernard/bernard": "^1.0@dev",
+        "bernard/bernard": "dev-master",
         "bshaffer/oauth2-server-php": "^1.10",
         "doctrine/collections": "^1.6",
         "doctrine/dbal": "^2.9",
@@ -32,7 +32,7 @@
         "relay/relay": "2.x@dev",
         "sensiolabs/security-checker": "^6.0",
         "symfony/console": "^4.2",
-        "symfony/dotenv": "^4.2",
+        "symfony/dotenv": "^5.0",
         "symfony/property-access": "^4.2",
         "symfony/translation": "^5.0",
         "symfony/yaml": "^5.0",
