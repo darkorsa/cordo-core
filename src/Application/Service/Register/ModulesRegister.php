@@ -192,7 +192,7 @@ class ModulesRegister
             $viewsPath = self::viewsPath($context, $module);
 
             if (file_exists($viewsPath)) {
-                $templates->addFolder(strtolower($module), $viewsPath);
+                $templates->addFolder(strtolower($context . '.' . $module), $viewsPath);
             }
         };
 
