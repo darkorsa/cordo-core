@@ -15,6 +15,8 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class ModuleBuilderCommand extends Command
 {
+    private const DEFAULT_ARCHIVE = 'CRUDModule.zip';
+
     protected static $defaultName = 'system:module-builder';
 
     protected $output;
@@ -26,8 +28,9 @@ class ModuleBuilderCommand extends Command
             ->setHelp('Creates file and dir default structure for a new module.')
             ->setDefinition(
                 new InputDefinition([
+                    new InputArgument('context', InputArgument::REQUIRED),
                     new InputArgument('module_name', InputArgument::REQUIRED),
-                    new InputArgument('module_archive', InputArgument::REQUIRED),
+                    new InputArgument('module_archive', InputArgument::OPTIONAL),
                 ])
             );
     }
@@ -37,49 +40,68 @@ class ModuleBuilderCommand extends Command
         $this->output = $output;
         $params = (object) $input->getArguments();
 
-        $moduleName     = $this->fixModuleName($params->module_name);
-        $moduleArchive  = $params->module_archive;
-        $resourcePath   = resources_path() . 'module/' . $moduleArchive;
+        $context = $params->context;
+        $moduleName = $this->fixModuleName($params->module_name);
+        $moduleArchive = $params->module_archive ?: self::DEFAULT_ARCHIVE;
+        $resourcePath = resources_path() . 'module/' . $moduleArchive;
 
         if (!file_exists($resourcePath)) {
             $output->writeln("<error>Cannot find archive in location: {$resourcePath}</error>");
             exit;
         }
 
-        if (file_exists(app_path() . $moduleName)) {
+        if (file_exists(app_path() . $context . '/' . $moduleName)) {
             $output->writeln("<error>Module {$moduleName} already exists</error>");
             exit;
         }
 
         $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion("Should I proceed with creating module {$moduleName}? (y/n) ", false);
+        $question = new ConfirmationQuestion(
+            "Should I proceed with creating module {$moduleName} in {$context} context? (y/n) ",
+            false
+        );
 
         if (!$helper->ask($input, $output, $question)) {
             $output->writeln('Bye!');
             exit;
         }
 
-        $this->buildModule($moduleName, $resourcePath);
+        $this->buildModule($context, $moduleName, $resourcePath);
+
+        return 0;
     }
 
-    protected function buildModule(string $moduleName, string $resourcePath): void
+    protected function buildModule(string $context, string $moduleName, string $resourcePath): void
     {
-        $modulePath = app_path() . $moduleName;
+        $contextPath = app_path() . $context;
+        $modulePath = $contextPath . '/' . $moduleName;
+
+        $this->createContextDir($contextPath);
 
         $this->createModuleDir($modulePath);
 
         $this->extractArchive($resourcePath, $modulePath);
 
-        $this->renameFiles($modulePath, $moduleName);
+        $this->renameFiles($context, $modulePath, $moduleName);
 
-        $this->parseFiles($modulePath, $moduleName);
+        $this->parseFiles($context, $modulePath, $moduleName);
 
         $this->output->writeln('Successfully done!');
     }
 
+    protected function createContextDir(string $path): void
+    {
+        if (file_exists($path)) {
+            return;
+        }
+
+        $this->output->writeln('Creating context folder...');
+        mkdir($path, 0777, true);
+    }
+
     protected function createModuleDir(string $path): void
     {
-        $this->output->writeln('Creating module directory...');
+        $this->output->writeln('Creating module folder...');
         mkdir($path, 0777, true);
     }
 
@@ -97,7 +119,7 @@ class ModuleBuilderCommand extends Command
         }
     }
 
-    protected function renameFiles(string $modulePath, string $moduleName): void
+    protected function renameFiles(string $context, string $modulePath, string $moduleName): void
     {
         $this->output->writeln('Renaming files...');
 
@@ -105,7 +127,7 @@ class ModuleBuilderCommand extends Command
         $iterator = new RecursiveIteratorIterator($directory);
 
         foreach ($iterator as $file) {
-            $replacements = $this->getReplacements($moduleName);
+            $replacements = $this->getReplacements($context, $moduleName);
 
             $renamed = str_replace(
                 array_keys($replacements),
@@ -117,7 +139,7 @@ class ModuleBuilderCommand extends Command
         }
     }
 
-    protected function parseFiles(string $modulePath, string $moduleName): void
+    protected function parseFiles(string $context, string $modulePath, string $moduleName): void
     {
         $this->output->writeln('Parsing files...');
 
@@ -125,7 +147,7 @@ class ModuleBuilderCommand extends Command
         $iterator = new RecursiveIteratorIterator($directory);
 
         foreach ($iterator as $file) {
-            $replacements = $this->getReplacements($moduleName);
+            $replacements = $this->getReplacements($context, $moduleName);
 
             $fileContent = str_replace(
                 array_keys($replacements),
@@ -137,9 +159,10 @@ class ModuleBuilderCommand extends Command
         }
     }
 
-    protected function getReplacements(string $moduleName): array
+    protected function getReplacements(string $context, string $moduleName): array
     {
         return [
+            '[Context]'     => $context,
             '[entity]'      => strtolower($this->getSingular($moduleName)),
             '[entities]'    => strtolower($moduleName),
             '[Entity]'      => $this->getSingular($moduleName),
