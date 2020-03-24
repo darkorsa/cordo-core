@@ -162,11 +162,12 @@ class ModuleBuilderCommand extends Command
     protected function getReplacements(string $context, string $moduleName): array
     {
         return [
-            '[Context]'     => $context,
-            '[entity]'      => strtolower($this->getSingular($moduleName)),
-            '[entities]'    => strtolower($moduleName),
-            '[Entity]'      => $this->getSingular($moduleName),
-            '[Entities]'    => $moduleName,
+            '[Context]' => $context,
+            '[context]' => strtolower($context),
+            '[entity]' => strtolower($this->getSingular($moduleName)),
+            '[entities]' => strtolower($moduleName),
+            '[Entity]' => $this->getSingular($moduleName),
+            '[Entities]' => $moduleName,
         ];
     }
 
