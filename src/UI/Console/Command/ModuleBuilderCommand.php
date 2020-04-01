@@ -41,7 +41,7 @@ class ModuleBuilderCommand extends Command
         $params = (object) $input->getArguments();
 
         $context = $params->context;
-        $moduleName = $this->fixModuleName($params->module_name);
+        $moduleName = $params->module_name;
         $moduleArchive = $params->module_archive ?: self::DEFAULT_ARCHIVE;
         $resourcePath = resources_path() . 'module/' . $moduleArchive;
 
@@ -169,15 +169,6 @@ class ModuleBuilderCommand extends Command
             '[Entity]' => $this->getSingular($moduleName),
             '[Entities]' => $moduleName,
         ];
-    }
-
-    protected function fixModuleName(string $moduleName): string
-    {
-        if (substr($moduleName, -1) !== 's') {
-            return $moduleName . 's';
-        }
-
-        return $moduleName;
     }
 
     protected function getSingular(string $moduleName): string
