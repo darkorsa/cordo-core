@@ -8,14 +8,14 @@ use DI\Container;
 use Noodlehaus\Config;
 use League\Plates\Engine;
 use Cordo\Core\UI\Http\Router;
-use Laminas\Permissions\Acl\Acl;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+use Laminas\Permissions\Acl\Acl;
 use League\Event\EmitterInterface;
 use Psr\Container\ContainerInterface;
-use Cordo\Core\Application\Config\Parser;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Translation\Translator;
+use Cordo\Core\Application\Config\ModuleParser;
 
 class ModulesRegister
 {
@@ -106,7 +106,10 @@ class ModulesRegister
             $configsPath = self::configsPath($context, $module);
 
             if (file_exists($configsPath)) {
-                $moduleConfig = new Config($configsPath, new Parser());
+                $moduleConfig = new Config(
+                    $configsPath,
+                    new ModuleParser(strtolower($context), strtolower($module))
+                );
                 $config->merge($moduleConfig);
             }
         };
