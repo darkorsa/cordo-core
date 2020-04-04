@@ -26,7 +26,7 @@ class TransformerManager implements TransformerManagerInterface
         $this->transformers[$index] = $transformer;
     }
 
-    public function transform($result, string $index, bool $withSerializer = true): array
+    public function transform($result, string $index, ?array $parseIncludes = [], bool $withSerializer = true): array
     {
         if (empty($result)) {
             return $result;
@@ -36,6 +36,8 @@ class TransformerManager implements TransformerManagerInterface
         if ($withSerializer) {
             $fractal->setSerializer(new JsonApiSerializer((string) getenv('APP_URL')));
         }
+
+        $fractal->parseIncludes($parseIncludes);
 
         return $fractal->createData($this->resource($result, $index))->toArray();
     }
