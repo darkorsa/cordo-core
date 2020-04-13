@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Cordo\Core\Infractructure\Persistance\Doctrine\Query;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Cordo\Core\Application\Query\QueryFilter;
+use Cordo\Core\Application\Query\QueryFilterInterface;
 
 abstract class QueryBuilderFilter
 {
     protected $queryFilter;
 
-    public function __construct(?QueryFilter $queryFilter)
+    public function __construct(?QueryFilterInterface $queryFilter)
     {
         $this->queryFilter = $queryFilter;
     }
