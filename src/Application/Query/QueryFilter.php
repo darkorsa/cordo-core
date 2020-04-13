@@ -107,7 +107,7 @@ class QueryFilter implements QueryFilterInterface
 
         foreach ($sorts as $sort) {
             $queryFilter->sort[] = (object) [
-                'direction' => $sort{0} == '-' ? 'DESC' : 'ASC',
+                'direction' => $sort[0] == '-' ? 'DESC' : 'ASC',
                 'column' => trim($sort, '-')
             ];
         }
