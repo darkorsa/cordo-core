@@ -2,8 +2,6 @@
 
 namespace Cordo\Core\UI\Console\Command;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -40,7 +38,6 @@ class InitCommand extends BaseConsoleCommand
 
         $this->importOauthSql($command, $output);
         $this->importUuidSql($command, $output);
-        $this->createSchema($em, $output);
 
         return 0;
     }
@@ -63,17 +60,5 @@ class InitCommand extends BaseConsoleCommand
         ];
 
         return $command->run(new ArrayInput($arguments), $output);
-    }
-
-    private function createSchema(EntityManager $em, $output)
-    {
-        $tool = new SchemaTool($em);
-        $classes = [
-            $em->getClassMetadata('App\Backoffice\Users\Domain\User'),
-            $em->getClassMetadata('App\Backoffice\Auth\Domain\Acl')
-        ];
-        $tool->createSchema($classes);
-
-        $output->writeln('Schema created successfully.');
     }
 }
