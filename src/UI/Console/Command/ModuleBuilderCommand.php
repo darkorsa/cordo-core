@@ -17,7 +17,7 @@ class ModuleBuilderCommand extends Command
 {
     private const DEFAULT_ARCHIVE = 'CRUDModule.zip';
 
-    protected static $defaultName = 'system:module-builder';
+    protected static $defaultName = 'core:module-builder';
 
     protected $output;
 
