@@ -21,6 +21,11 @@ class ModulesRegister
 {
     protected static $register = [];
 
+    public static function add(string $module): void
+    {
+        static::$register[] = $module;
+    }
+
     public static function initModules(Container $container, bool $isRunningInConsole): void
     {
         $initModule = function (string $context, string $module) use ($container, $isRunningInConsole): void {
