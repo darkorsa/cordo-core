@@ -134,7 +134,11 @@ class ModulesRegister
             return [];
         };
 
-        $handlersMap = [];
+        static $handlersMap = [];
+
+        if (!empty($handlersMap)) {
+            return $handlersMap;
+        }
 
         // app handlers
         foreach (static::$register as $moduleInContext) {
