@@ -23,7 +23,7 @@ final class QueueMiddleware implements Middleware
     /**
      * @param Producer $producer
      */
-    public function __construct(Producer $producer, $queue = 'default')
+    public function __construct(Producer $producer, string $queue)
     {
         $this->producer = $producer;
         $this->queue = $queue;
