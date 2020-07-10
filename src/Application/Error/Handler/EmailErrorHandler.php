@@ -7,24 +7,21 @@ namespace Cordo\Core\Application\Error\Handler;
 use Throwable;
 use Laminas\Mail\Message;
 use Cordo\Core\Application\Error\ErrorHandlerInterface;
-use Cordo\Core\Infractructure\Mailer\ZendMail\MailerFactory;
+use Cordo\Core\Infractructure\Mailer\ZendMail\MailerInterface;
 
 class EmailErrorHandler implements ErrorHandlerInterface
 {
-    private $to;
-
-    private $config;
-
     private $mailer;
 
-    public function __construct()
-    {
-        $config = require root_path() . 'config/mail.php';
-        $error  = require root_path() . 'config/error.php';
+    private $from;
 
-        $this->mailer   = MailerFactory::factory($config);
-        $this->to       = (array) $error['error_reporting_emails'];
-        $this->config   = (object) $config;
+    private $to;
+
+    public function __construct(MailerInterface $mailer, string $from, array $to)
+    {
+        $this->mailer = $mailer;
+        $this->from = $from;
+        $this->to = $to;
     }
 
     public function handle(Throwable $exception): void
@@ -42,7 +39,7 @@ class EmailErrorHandler implements ErrorHandlerInterface
                 $message->addTo($email);
             }
         }
-        $message->addFrom($this->config->from)
+        $message->addFrom($this->from)
             ->setSubject('Critical Error')
             ->setBody($messageText);
 
