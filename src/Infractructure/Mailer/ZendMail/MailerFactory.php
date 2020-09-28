@@ -12,9 +12,15 @@ class MailerFactory
     {
         switch ($config['driver']) {
             case 'log':
-                return new LogMailer($config['log_path']);
+                return new LogMailer($config['drivers']['log']['path']);
             case 'smtp':
-                return new SmtpMailer($config['host'], $config['port'], $config['username'], $config['password']);
+                $smtp = $config['drivers']['smtp'];
+                return new SmtpMailer(
+                    $smtp['host'],
+                    $smtp['port'],
+                    $smtp['username'],
+                    $smtp['password']
+                );
             default:
                 throw new InvalidArgumentException("Unknown mailer driver: " . $config['driver']);
         }

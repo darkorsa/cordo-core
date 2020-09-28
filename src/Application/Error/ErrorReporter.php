@@ -56,9 +56,7 @@ class ErrorReporter implements ErrorReporterInterface
 
     public function exceptionHandler(Throwable $exception): void
     {
-        foreach ($this->handlers as $handler) {
-            $handler->handle($exception);
-        }
+        $this->report($exception);
 
         http_response_code(500);
         exit;
