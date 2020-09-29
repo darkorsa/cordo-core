@@ -34,6 +34,7 @@
         "ramsey/uuid": "^3.8",
         "ramsey/uuid-doctrine": "^1.5",
         "relay/relay": "2.x@dev",
+        "rollbar/rollbar": "^2.1",
         "sensiolabs/security-checker": "^6.0",
         "symfony/console": "^4.2",
         "symfony/dotenv": "^5.0",
