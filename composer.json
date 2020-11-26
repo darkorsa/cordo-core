@@ -40,7 +40,8 @@
         "symfony/dotenv": "^5.0",
         "symfony/property-access": "^4.2",
         "symfony/translation": "^5.0",
-        "symfony/yaml": "^5.0"
+        "symfony/yaml": "^5.0",
+        "tuupola/cors-middleware": "^1.2"
     },
     "require-dev": {
         "nunomaduro/phpinsights": "^1.7",
