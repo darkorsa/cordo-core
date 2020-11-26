@@ -24,7 +24,7 @@ class JsonResponse implements \Cordo\Core\UI\ResponseInterface
 
         // additional headers
         foreach ($this->response->getHeaders() as $key => $val) {
-            header("{$key}:{" . current($val) . "}");
+            header("$key: " . current($val) . "");
         }
 
         $body = (string) $this->response->getBody();
