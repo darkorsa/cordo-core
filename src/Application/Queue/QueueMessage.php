@@ -2,7 +2,7 @@
 
 namespace Cordo\Core\Application\Queue;
 
-class AbstractMessage implements MessageInterface
+class QueueMessage implements QueueMessageInterface
 {
     public $fired = 0;
 

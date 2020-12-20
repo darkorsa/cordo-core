@@ -34,7 +34,7 @@ final class QueueMiddleware implements Middleware
      */
     public function execute($command, callable $next)
     {
-        if ($command instanceof MessageInterface) {
+        if ($command instanceof QueueMessageInterface) {
             $command->fire();
             $this->producer->produce($command, $this->queue);
             return;

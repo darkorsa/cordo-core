@@ -2,9 +2,9 @@
 
 namespace Cordo\Core\Application\Queue;
 
-use League\Tactician\Bernard\QueueableCommand;
+use Bernard\Message;
 
-interface MessageInterface extends QueueableCommand
+interface QueueMessageInterface extends Message
 {
     public function getName();
 
