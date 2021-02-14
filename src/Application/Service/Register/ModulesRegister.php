@@ -26,21 +26,6 @@ class ModulesRegister
         static::$register[] = $module;
     }
 
-    public static function initModules(Container $container, bool $isRunningInConsole): void
-    {
-        $initModule = function (string $context, string $module) use ($container, $isRunningInConsole): void {
-            $className = self::getModuleInitClassName($context, $module);
-
-            if (!class_exists($className)) {
-                return;
-            }
-
-            $className::init($container, $isRunningInConsole);
-        };
-
-        self::call($initModule);
-    }
-
     public static function registerRoutes(Router $router, ContainerInterface $container): void
     {
         $registerRoutes = function (string $context, string $module) use ($router, $container): void {
@@ -265,11 +250,6 @@ class ModulesRegister
     private static function getModulePath(string $context, string $module)
     {
         return app_path() . $context . '/' . $module;
-    }
-
-    private static function getModuleInitClassName(string $context, string $module): string
-    {
-        return self::getModuleNamespace($context, $module) . "\\{$module}Init";
     }
 
     private static function routesClassname(string $context, string $module): string
