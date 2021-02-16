@@ -37,11 +37,11 @@
         "rollbar/rollbar": "^2.1",
         "sensiolabs/security-checker": "^6.0",
         "symfony/console": "^4.2",
-        "symfony/dotenv": "^5.0",
         "symfony/property-access": "^5.1",
         "symfony/translation": "^5.0",
         "symfony/yaml": "^5.0",
-        "tuupola/cors-middleware": "^1.2"
+        "tuupola/cors-middleware": "^1.2",
+        "vlucas/phpdotenv": "^5.3"
     },
     "require-dev": {
         "nunomaduro/phpinsights": "^1.7",
