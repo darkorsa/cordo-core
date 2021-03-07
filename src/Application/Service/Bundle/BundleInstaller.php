@@ -57,7 +57,7 @@ class BundleInstaller
 
     private function parseFiles(): void
     {
-        $directory = new RecursiveDirectoryIterator($this->sourcePath, FilesystemIterator::SKIP_DOTS);
+        $directory = new RecursiveDirectoryIterator($this->destPath, FilesystemIterator::SKIP_DOTS);
         $iterator = new RecursiveIteratorIterator($directory);
 
         foreach ($iterator as $file) {
