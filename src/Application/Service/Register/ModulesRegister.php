@@ -35,7 +35,7 @@ class ModulesRegister
                 return;
             }
 
-            $routesRegister = new $className($router, $container, strtolower($module));
+            $routesRegister = new $className($router, $container, self::resource($context, $module));
             $routesRegister->register();
         };
 
@@ -176,7 +176,7 @@ class ModulesRegister
                 return;
             }
 
-            $aclRegister = new $className($acl, strtolower($module));
+            $aclRegister = new $className($acl, self::resource($context, $module));
             $aclRegister->register();
         };
 
@@ -242,6 +242,11 @@ class ModulesRegister
         }
     }
 
+    private static function resource(string $context, string $module): string
+    {
+        return strtolower("{$context}\\{$module}");
+    }
+
     private static function getModuleNamespace(string $context, string $module)
     {
         return "App\\{$context}\\{$module}";
@@ -249,7 +254,7 @@ class ModulesRegister
 
     private static function getModulePath(string $context, string $module)
     {
-        return app_path() . $context . '/' . $module;
+        return app_path($context . '/' . $module);
     }
 
     private static function routesClassname(string $context, string $module): string
