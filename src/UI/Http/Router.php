@@ -45,6 +45,23 @@ class Router
         };
     }
 
+    public function getRoutesCollection(array $options = []): array
+    {
+        $options += [
+            'routeParser' => 'FastRoute\\RouteParser\\Std',
+            'dataGenerator' => 'FastRoute\\DataGenerator\\GroupCountBased',
+        ];
+
+        $routeCollector = new RouteCollector(
+            new $options['routeParser'],
+            new $options['dataGenerator']
+        );
+
+        ($this->routes())($routeCollector);
+
+        return $routeCollector->getData();
+    }
+
     private function getHandler(stdClass $route)
     {
         return function (ServerRequestInterface $request, ContainerInterface $container, array $vars) use ($route) {
