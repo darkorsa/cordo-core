@@ -7,6 +7,7 @@
         "bernard/bernard": "dev-master",
         "bernard/drivers": "0.1.x-dev",
         "bshaffer/oauth2-server-php": "^1.10",
+        "composer/composer": "^2.0.13",
         "doctrine/collections": "^1.6",
         "doctrine/dbal": "^2.12",
         "doctrine/orm": "^2.8",
