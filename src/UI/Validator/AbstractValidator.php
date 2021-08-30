@@ -12,17 +12,11 @@ abstract class AbstractValidator implements ValidatorInterface
 {
     protected Validator $validator;
 
-    protected array $data;
-
     protected ?ValidationResult $result = null;
 
-    public function __construct(array $data, array $customDefaultMessages = null)
+    public function __construct()
     {
         $this->validator = new Validator();
-        if ($customDefaultMessages) {
-            $this->validator->overwriteDefaultMessages($customDefaultMessages);
-        }
-        $this->data = $data;
     }
 
     public function addCallbackValidator(string $field, callable $callback)
@@ -30,10 +24,15 @@ abstract class AbstractValidator implements ValidatorInterface
         $this->validator->required($field)->callback($callback);
     }
 
-    public function isValid(): bool
+    public function isValid(array $data, array $customDefaultMessages = null): bool
     {
         $this->validationRules();
-        $this->result = $this->validator->validate($this->data);
+
+        if ($customDefaultMessages) {
+            $this->validator->overwriteDefaultMessages($customDefaultMessages);
+        }
+
+        $this->result = $this->validator->validate($data);
 
         return $this->result->isValid();
     }
