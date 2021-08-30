@@ -16,9 +16,12 @@ abstract class AbstractValidator implements ValidatorInterface
 
     protected ?ValidationResult $result = null;
 
-    public function __construct(array $data)
+    public function __construct(array $data, array $customDefaultMessages = null)
     {
         $this->validator = new Validator();
+        if ($customDefaultMessages) {
+            $this->validator->overwriteDefaultMessages($customDefaultMessages);
+        }
         $this->data = $data;
     }
 

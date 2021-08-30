@@ -46,6 +46,8 @@
     },
     "require-dev": {
         "nunomaduro/phpinsights": "dev-master",
+        "pestphp/pest": "^1.18",
+        "pestphp/pest-plugin-faker": "^1.0",
         "phpstan/phpstan": "^0.12",
         "symfony/var-dumper": "^5.2"
     },
@@ -60,7 +62,7 @@
         }
     },
     "scripts": {
-        "test": "phpunit",
+        "test": "XDEBUG_MODE=coverage pest --coverage",
         "analyse": "phpstan analyse -l max -c phpstan.neon src tests",
         "insights": "phpinsights -v",
         "check-style": "phpcs -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src/",
