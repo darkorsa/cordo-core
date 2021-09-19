@@ -63,7 +63,7 @@
     },
     "scripts": {
         "test": "XDEBUG_MODE=coverage pest --coverage",
-        "analyse": "phpstan analyse -l max -c phpstan.neon src tests",
+        "analyse": "phpstan analyse -l 5 -c phpstan.neon src tests",
         "insights": "phpinsights -v",
         "check-style": "phpcs -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src/",
         "fix-style": "phpcbf -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src/"
