@@ -15,7 +15,7 @@ abstract class QueryBuilderFilter
     {
         $this->queryFilter = $queryFilter;
     }
-    
+
     public function filter(QueryBuilder $queryBuilder): void
     {
         if (!$this->queryFilter) {
@@ -47,6 +47,15 @@ abstract class QueryBuilderFilter
                 $sort->direction
             );
         }
+    }
+
+    protected function getFilter(string $key)
+    {
+        if (!$this->queryFilter) {
+            return null;
+        }
+
+        return $this->queryFilter->getFilter($key);
     }
 
     abstract protected function doFilter(QueryBuilder $queryBuilder): void;
