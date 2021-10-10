@@ -10,5 +10,5 @@ interface TransformerManagerInterface
 {
     public function add(TransformerAbstract $transformer, string $index): void;
 
-    public function transform($result, string $index): array;
+    public function transform($result, string $index, ?array $parseIncludes = [], bool $withSerializer = true): array;
 }
