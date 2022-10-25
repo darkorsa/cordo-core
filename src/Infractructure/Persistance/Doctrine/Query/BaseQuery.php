@@ -54,7 +54,6 @@ abstract class BaseQuery
     {
         $collection = new ArrayCollection();
         array_map(static function (array $data) use ($collection, $view) {
-            // @phpstan-ignore-next-line
             $collection->add(call_user_func($view . '::fromArray', $data));
         }, $result);
 

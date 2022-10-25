@@ -2,3 +2,9 @@ parameters:
     inferPrivatePropertyTypeFromConstructor: true
     checkGenericClassInNonGenericObjectType: false
     checkMissingIterableValueType: false
+    universalObjectCratesClasses:
+        - Cordo\Core\Application\App
+    ignoreErrors:
+        -
+            message: '#Undefined variable: \$this#'
+            path: tests/*

@@ -44,7 +44,12 @@ class Dispatcher
 
                 $controller = $this->container->get($class);
 
-                return $controller->run($request, $method, $vars);
+                /** @var ResponseInterface $response */
+                $response = $controller->run($request, $method, $vars);
+
+                return $response;
+            default:
+                throw new \Exception('Unknown dispatche result');
         }
     }
 }

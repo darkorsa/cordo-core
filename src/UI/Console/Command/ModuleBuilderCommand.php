@@ -5,6 +5,7 @@ namespace Cordo\Core\UI\Console\Command;
 use ZipArchive;
 use FilesystemIterator;
 use RecursiveIteratorIterator;
+use Cordo\Core\Application\App;
 use RecursiveDirectoryIterator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -43,14 +44,14 @@ class ModuleBuilderCommand extends Command
         $context = $params->context;
         $moduleName = $params->module_name;
         $moduleArchive = $params->module_archive ?: self::DEFAULT_ARCHIVE;
-        $resourcePath = resources_path() . 'module/' . $moduleArchive;
+        $resourcePath = App::rootPath("resources/module/{$moduleArchive}");
 
         if (!file_exists($resourcePath)) {
             $output->writeln("<error>Cannot find archive in location: {$resourcePath}</error>");
             exit;
         }
 
-        if (file_exists(app_path() . $context . '/' . $moduleName)) {
+        if (file_exists(App::rootPath("app/{$context}/{$moduleName}"))) {
             $output->writeln("<error>Module {$moduleName} already exists</error>");
             exit;
         }
@@ -73,8 +74,8 @@ class ModuleBuilderCommand extends Command
 
     protected function buildModule(string $context, string $moduleName, string $resourcePath): void
     {
-        $contextPath = app_path() . $context;
-        $modulePath = $contextPath . '/' . $moduleName;
+        $contextPath = App::rootPath("app/{$context}");
+        $modulePath = "{$contextPath}/{$moduleName}";
 
         $this->createContextDir($contextPath);
 

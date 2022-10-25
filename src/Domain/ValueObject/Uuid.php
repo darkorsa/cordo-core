@@ -30,11 +30,6 @@ class Uuid
         return $this->value() === $other->value();
     }
 
-    public static function random(): self
-    {
-        return new static(RamseyUuid::uuid1()->toString());
-    }
-
     public function __toString(): string
     {
         return $this->value();

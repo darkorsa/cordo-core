@@ -13,22 +13,16 @@ class ErrorReporterBuilder
 
     private Config $config;
 
-    private string $env;
-
-    private bool $debug;
-
-    public function __construct(ErrorReporterInterface $errorReporter, Config $config, string $env, bool $debug)
+    public function __construct(ErrorReporterInterface $errorReporter, Config $config)
     {
         $this->errorReporter = $errorReporter;
         $this->config = $config;
-        $this->env = $env;
-        $this->debug = $debug;
     }
 
     public function build(): ErrorReporterInterface
     {
-        $stack = $this->config->get('error')['stacks'][$this->env];
-        if ($this->debug) {
+        $stack = $this->config->get('error')['stacks'][$this->config->get('app.environment')];
+        if ($this->config->get('app.debug')) {
             $stack[] = 'verbose';
         }
 

@@ -56,6 +56,6 @@ class EventDispatcherAdapter implements EventDispatcherInterface
 
     public function dispatch($event)
     {
-        return $this->dispatcher->dispatch(func_get_arg(1), $event);
+        return $this->dispatcher->dispatch(func_get_arg(1), $event); // @phpstan-ignore-line
     }
 }

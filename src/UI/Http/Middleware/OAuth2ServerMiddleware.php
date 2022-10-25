@@ -18,31 +18,28 @@ use Psr\Http\Server\RequestHandlerInterface;
 class OAuth2ServerMiddleware implements MiddlewareInterface
 {
     private Container $container;
-    
-    private array $servers;
 
     private array $db;
-    
+
     public function __construct(Container $container, array $servers, array $db)
     {
         $this->container = $container;
-        $this->servers = $servers;
         $this->db = $db;
+
+        foreach ($servers as $namespace => $serverConfig) {
+            $this->registerServer($namespace, $serverConfig);
+        }
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        foreach ($this->servers as $namespace => $serverConfig) {
-            $this->registerServer($namespace, $serverConfig);
-        }
-
         return $handler->handle($request);
     }
 
     private function registerServer(string $namespace, array $serverConfig)
     {
         $storage = new Pdo([
-            'dsn' => 'mysql:dbname=' . $this->db['database'] . ';host=' . $this->db['host'],
+            'dsn' => 'mysql:dbname=' . $this->db['dbname'] . ';host=' . $this->db['host'],
             'username' => $this->db['user'],
             'password' => $this->db['password'],
         ]);

@@ -4,37 +4,33 @@ declare(strict_types=1);
 
 namespace Cordo\Core\UI;
 
-use Psr\Container\ContainerInterface;
+use Noodlehaus\Config;
 
 class Locale
 {
-    public static function get(ContainerInterface $container, bool $isRunningInConsole): string
+    public static function get(Config $config, bool $isRunningInConsole): string
     {
-        if ($isRunningInConsole) {
-            return self::getConsoleLocale($container);
-        }
+        $lang = $isRunningInConsole
+            ? self::getConsoleLang()
+            : self::getHttpLang();
 
-        return self::getHttpLocale($container);
+        return self::getLocaleForLang($lang, $config);
     }
 
-    private static function getHttpLocale(ContainerInterface $container): string
+    private static function getHttpLang(): ?string
     {
-        $request = $container->get('request');
-
-        return self::getLocaleForLang($request->getQueryParams()['lang'] ?? null, $container);
+        return $_GET['lang'] ?? null;
     }
 
-    private static function getConsoleLocale(ContainerInterface $container): string
+    private static function getConsoleLang(): ?string
     {
         parse_str(implode('&', array_slice($_SERVER['argv'], 1)), $args);
 
-        return self::getLocaleForLang($args['--lang'] ?? null, $container);
+        return $args['--lang'] ?? null;
     }
 
-    private static function getLocaleForLang(?string $lang, ContainerInterface $container): string
+    private static function getLocaleForLang(?string $lang, Config $config): string
     {
-        $config = $container->get('config');
-
         if (!in_array($lang, $config->get('trans.accepted_langs'))) {
             return $config->get('trans.fallback_locale');
         }

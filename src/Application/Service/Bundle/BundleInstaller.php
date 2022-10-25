@@ -3,14 +3,13 @@
 namespace Cordo\Core\Application\Service\Bundle;
 
 use SplFileInfo;
-use App\Register;
 use FilesystemIterator;
+use Doctrine\ORM\ORMSetup;
 use RecursiveIteratorIterator;
-use Nette\PhpGenerator\PhpFile;
+use Cordo\Core\Application\App;
+use Doctrine\ORM\EntityManager;
 use RecursiveDirectoryIterator;
-use Nette\PhpGenerator\ClassType;
 use Doctrine\ORM\Tools\SchemaTool;
-use Nette\PhpGenerator\PsrPrinter;
 
 class BundleInstaller
 {
@@ -42,6 +41,7 @@ class BundleInstaller
             RecursiveIteratorIterator::SELF_FIRST
         );
 
+        /** @var RecursiveDirectoryIterator $iterator */
         foreach ($iterator as $item) {
             if ($item->isDir()) {
                 mkdir($this->destPath . DIRECTORY_SEPARATOR . $iterator->getSubPathname());
@@ -84,34 +84,23 @@ class BundleInstaller
         }
     }
 
-    public function registerModules(string ...$modules)
-    {
-        // register
-        foreach ($modules as $module) {
-            Register::add($this->bundleDestName . '\\' . $module);
-        }
-
-        // add modules to app/Register file
-        $class = ClassType::from(Register::class);
-        $file = (new PhpFile())->setStrictTypes();
-
-        $namespace = $file->addNamespace('App');
-        $namespace->add($class);
-        $namespace->addUse('Cordo\Core\Application\Service\Register\ModulesRegister');
-
-        file_put_contents(app_path() . 'Register.php', (new PsrPrinter)->printFile($file));
-    }
-
     public function createSchema(...$domains)
     {
-        $em = require(root_path() . 'bootstrap/db.php');
-        $tool = new SchemaTool($em);
+        $config = ORMSetup::createXMLMetadataConfiguration([
+            "{$this->destPath}/Users/Infrastructure/Persistance/Doctrine/ORM/Metadata",
+        ]);
+
+        $em = EntityManager::create(App::getInstance()->db_config, $config);
+        $em
+            ->getConnection()
+            ->getDatabasePlatform()
+            ->registerDoctrineTypeMapping('uuid_binary_ordered_time', 'binary');
 
         $classes = [];
         foreach ($domains as $domain) {
             $classes[] = $em->getClassMetadata($domain);
         }
 
-        $tool->createSchema($classes);
+        (new SchemaTool($em))->createSchema($classes);
     }
 }

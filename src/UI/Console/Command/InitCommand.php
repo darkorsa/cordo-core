@@ -2,6 +2,7 @@
 
 namespace Cordo\Core\UI\Console\Command;
 
+use Cordo\Core\Application\App;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -63,7 +64,7 @@ class InitCommand extends BaseConsoleCommand
     {
         $arguments = [
             'command' => 'dbal:import',
-            'file'    => resources_path() . 'database/sql/oauth.sql',
+            'file' => App::rootPath('resources/database/sql/oauth.sql'),
         ];
 
         return $command->run(new ArrayInput($arguments), $output);
@@ -73,7 +74,7 @@ class InitCommand extends BaseConsoleCommand
     {
         $arguments = [
             'command' => 'dbal:import',
-            'file'    => resources_path() . 'database/sql/uuid.sql',
+            'file' => App::rootPath('resources/database/sql/uuid.sql'),
         ];
 
         return $command->run(new ArrayInput($arguments), $output);
