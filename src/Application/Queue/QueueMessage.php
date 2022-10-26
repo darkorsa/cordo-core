@@ -1,23 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cordo\Core\Application\Queue;
 
-class QueueMessage implements QueueMessageInterface
+abstract class QueueMessage implements QueueMessageInterface
 {
-    public $fired = 0;
+    protected bool $onQueue = false;
 
-    public function getName()
+    public function isOnQueue(): bool
     {
-        return get_class($this);
+        return $this->onQueue;
     }
 
-    public function fire(): void
+    public function pushOnQueue(): void
     {
-        $this->fired++;
-    }
-
-    public function fired(): int
-    {
-        return $this->fired;
+        $this->onQueue = true;
     }
 }

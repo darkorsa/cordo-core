@@ -18,7 +18,7 @@ class ModuleRegister
 
     public function __construct(protected App $app, protected string $modulePath, protected string $namespace,)
     {
-        [$app, $context, $module] = explode('\\', $namespace);
+        [$_, $context, $module] = explode('\\', $namespace);
 
         $this->context = $context;
         $this->module = $module;

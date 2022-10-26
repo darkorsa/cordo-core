@@ -1,14 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cordo\Core\Application\Queue;
 
-use Bernard\Message;
-
-interface QueueMessageInterface extends Message
+interface QueueMessageInterface
 {
-    public function getName();
+    public function isOnQueue(): bool;
 
-    public function fire(): void;
-
-    public function fired(): int;
+    public function pushOnQueue(): void;
 }

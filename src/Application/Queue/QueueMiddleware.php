@@ -1,32 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cordo\Core\Application\Queue;
 
-use Bernard\Producer;
 use League\Tactician\Middleware;
+use Illuminate\Queue\QueueManager;
+use Medforum\Application\Queue\QueueHandler;
 
 /**
  * Sends the command to a remote location using message queues
  */
 final class QueueMiddleware implements Middleware
 {
-    /**
-     * @var Producer
-     */
-    private $producer;
-
-    /**
-     * @var string
-     */
-    private $queue;
-
-    /**
-     * @param Producer $producer
-     */
-    public function __construct(Producer $producer, string $queue)
-    {
-        $this->producer = $producer;
-        $this->queue = $queue;
+    public function __construct(
+        private QueueManager $queue,
+        private string $connection
+    ) {
     }
 
     /**
@@ -34,9 +24,9 @@ final class QueueMiddleware implements Middleware
      */
     public function execute($command, callable $next)
     {
-        if ($command instanceof QueueMessageInterface) {
-            $command->fire();
-            $this->producer->produce($command, $this->queue);
+        if ($command instanceof QueueMessageInterface && !$command->isOnQueue()) {
+            $command->pushOnQueue();
+            $this->queue->connection($this->connection)->push(QueueHandler::class, serialize($command));
             return;
         }
 

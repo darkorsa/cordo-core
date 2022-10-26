@@ -38,15 +38,11 @@ class CommandBusRegister
         $commandLogger = new Logger('command');
         $commandLogger->pushHandler(new StreamHandler($this->app->rootPath('logs/command.log'), Logger::DEBUG));
 
-        // Queues
-        $queueFactory = require $this->app->rootPath('bootstrap/queue_factory.php');
-        $producer = new Producer($queueFactory, new EventDispatcher());
-
         $commandBus = new CommandBus([
             new LoggerMiddleware(new ClassNameFormatter(), $commandLogger),
             new LockingMiddleware(),
             new TransactionMiddleware($this->app->entity_manager),
-            new QueueMiddleware($producer, $this->app->config->get('queue.default_queue')),
+            new QueueMiddleware($this->app->laravel['queue'], $this->app->config->get('queue.default')),
             new EventMiddleware($this->app->emitter),
             $commandHandlerMiddleware,
         ]);
