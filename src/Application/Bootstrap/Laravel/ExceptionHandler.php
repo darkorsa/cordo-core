@@ -6,9 +6,9 @@ namespace Cordo\Core\Application\Bootstrap\Laravel;
 
 use Throwable;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Contracts\Debug\ExceptionHandler as ExceptionHandlerInterface;
 
-class LaravelExceptionHandler implements ExceptionHandler
+class ExceptionHandler implements ExceptionHandlerInterface
 {
     public function shouldReport(Throwable $e): bool
     {

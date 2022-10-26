@@ -6,7 +6,6 @@ namespace Cordo\Core\Application\Queue;
 
 use League\Tactician\Middleware;
 use Illuminate\Queue\QueueManager;
-use Medforum\Application\Queue\QueueHandler;
 
 /**
  * Sends the command to a remote location using message queues

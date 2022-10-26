@@ -3,6 +3,8 @@
     "description": "Core libraries for Cordo microframework",
     "license": "MIT",
     "require": {
+        "beberlei/assert": "^2.6",
+        "bshaffer/oauth2-server-php": "^1.10",
         "composer/composer": "^2.0.13",
         "doctrine/collections": "^1.6",
         "doctrine/dbal": "^2.12",
@@ -38,7 +40,7 @@
         "relay/relay": "2.x@dev",
         "rollbar/rollbar": "^2.1",
         "symfony/cache": "^5.3",
-        "symfony/console": "^6.0",
+        "symfony/console": "~6.0.0",
         "symfony/property-access": "^5.1",
         "symfony/translation": "^5.0",
         "symfony/yaml": "^5.0",

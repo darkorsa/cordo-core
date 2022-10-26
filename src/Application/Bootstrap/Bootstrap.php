@@ -20,6 +20,7 @@ use Cordo\Core\SharedKernel\Uuid\Helper\UuidFactoryHelper;
 use Cordo\Core\UI\Transformer\TransformerManagerInterface;
 use Cordo\Core\Application\Bootstrap\Register\ConsoleRegister;
 use Cordo\Core\Application\Bootstrap\Register\CommandBusRegister;
+use Cordo\Core\Application\Bootstrap\Register\LaravelRegister;
 
 class Bootstrap
 {
@@ -50,13 +51,12 @@ class Bootstrap
 
     public function register(): void
     {
-        # register command bus
+        (new LaravelRegister($this->app))->register();
+
         (new CommandBusRegister($this->app, $this->handlers))->register();
 
-        # register CLI console
         (new ConsoleRegister($this->app))->register();
 
-        # register modules
         $this->registerModules();
     }
 

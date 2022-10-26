@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Cordo\Core\Application\Bootstrap\Register;
 
+use Noodlehaus\Config;
 use Cordo\Core\Application\App;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Redis\RedisManager;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Database\DatabaseManager;
+use Cordo\Core\Application\Config\Parser;
 use Illuminate\Events\EventServiceProvider;
 use Medforum\UI\Validator\ValidatorFactory;
 use Cordo\Core\Application\Queue\QueueHandler;
@@ -23,12 +25,15 @@ class LaravelRegister
     public function __construct(private App $app)
     {
     }
-    
+
     public function register(): void
     {
         $app = Laravel::getInstance();
         $app->bind('exception.handler', ExceptionHandler::class);
-        $app->singleton('config', fn () => App::config());
+        $app->singleton('config', function () {
+            $config = new Config(__DIR__ . '/../Laravel/config', new Parser);
+            return $config->merge(App::config());
+        });
         // $app->singleton('validator', function ($app) {
         //     return (new ValidatorFactory())->getFactory();
         // });
@@ -61,21 +66,12 @@ class LaravelRegister
         $app->instance('Illuminate\Contracts\Events\Dispatcher', new Dispatcher($app));
         $app->bind('redis', function () use ($app) {
             /** @phpstan-ignore-next-line */
-            return new RedisManager($app, 'predis', [
-                'default' => App::config()->get('db.redis'),
+            return new RedisManager($app, $app['config']->get('database.redis.client'), [
+                'default' => $app['config']->get('database.redis.default'),
             ]);
         });
 
         $queue = new Queue($app);
-        $queue->addConnection([
-            'driver' => 'sync',
-        ], 'sync');
-
-        $queue->addConnection([
-            'driver' => 'redis',
-            'connection' => 'default',
-            'queue' => 'default',
-        ], 'redis');
 
         $app['queue'] = $queue->getQueueManager();
         $app[QueueHandler::class] = new QueueHandler(App::getInstance()->container);

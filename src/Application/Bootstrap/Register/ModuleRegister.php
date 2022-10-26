@@ -178,6 +178,6 @@ class ModuleRegister
 
     private function resource(): string
     {
-        return strtolower("{$this->context}\\{$this->module}");
+        return strtolower("{$this->context}_{$this->module}");
     }
 }
