@@ -6,6 +6,7 @@ namespace Cordo\Core\Application;
 
 use DI\Container;
 use Noodlehaus\Config;
+use Cordo\Core\UI\Locale;
 use Cordo\Core\SharedKernel\Enum\Env;
 use Cordo\Core\Application\Config\Parser;
 use Cordo\Core\Application\Bootstrap\Bootstrap;
@@ -18,6 +19,8 @@ class App
 
     private static App $app;
 
+    public readonly string $locale;
+
     public static function create(string $rootPath): self
     {
         return new self($rootPath, new Config($rootPath . 'config', new Parser));
@@ -29,6 +32,7 @@ class App
     ) {
         self::$app = $this;
         $this->bootstrap = new Bootstrap($this);
+        $this->locale = Locale::get($this->config, defined('STDIN'));
     }
 
     public function init(): void
@@ -49,6 +53,11 @@ class App
     public static function config(): Config
     {
         return self::$app->config;
+    }
+
+    public static function locale(): string
+    {
+        return self::$app->locale;
     }
 
     public static function getInstance(): self

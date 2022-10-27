@@ -18,7 +18,7 @@ abstract class ListenersRegister
     public function __construct(EmitterInterface $emitter, ContainerInterface $container, string $resource)
     {
         $this->emitter = $emitter;
-        $this->container = $container;
+        $this->commandBus = $container->get('command_bus');
         $this->resource = $resource;
     }
 
