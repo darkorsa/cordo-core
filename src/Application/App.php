@@ -21,6 +21,8 @@ class App
 
     public readonly string $locale;
 
+    public readonly string $lang;
+
     public static function create(string $rootPath): self
     {
         return new self($rootPath, new Config($rootPath . 'config', new Parser));
@@ -32,7 +34,8 @@ class App
     ) {
         self::$app = $this;
         $this->bootstrap = new Bootstrap($this);
-        $this->locale = Locale::get($this->config, defined('STDIN'));
+        $this->lang = Locale::getLang(defined('STDIN'));
+        $this->locale = Locale::getLocale($this->lang);
     }
 
     public function init(): void
@@ -53,6 +56,11 @@ class App
     public static function config(): Config
     {
         return self::$app->config;
+    }
+
+    public static function lang(): string
+    {
+        return self::$app->lang;
     }
 
     public static function locale(): string

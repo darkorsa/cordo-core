@@ -4,47 +4,27 @@ declare(strict_types=1);
 
 namespace Cordo\Core\UI\Validator;
 
-use Exception;
-use Particle\Validator\Validator;
-use Particle\Validator\ValidationResult;
+use Cordo\Core\Application\App;
+use Illuminate\Validation\Factory;
+use Illuminate\Validation\Validator;
 
-abstract class AbstractValidator implements ValidatorInterface
+abstract class AbstractValidator
 {
     protected Validator $validator;
 
-    protected ?ValidationResult $result = null;
+    protected Factory $factory;
 
-    public function __construct()
+    public function __construct(array $data)
     {
-        $this->validator = new Validator();
+        $this->factory = App::getInstance()->validator_factory;
+
+        $this->validator = $this->factory->make($data, $this->rules());
     }
 
-    public function addCallbackValidator(string $field, callable $callback)
+    public function __call(string $method, $params): mixed
     {
-        $this->validator->required($field)->callback($callback);
+        return $this->validator->$method($params);
     }
 
-    public function isValid(array $data, array $customDefaultMessages = null): bool
-    {
-        $this->validationRules();
-
-        if ($customDefaultMessages) {
-            $this->validator->overwriteDefaultMessages($customDefaultMessages);
-        }
-
-        $this->result = $this->validator->validate($data);
-
-        return $this->result->isValid();
-    }
-
-    public function messages(): array
-    {
-        if (!$this->result) {
-            throw new Exception('No validation messages. Execute validate method first!');
-        }
-
-        return $this->result->getMessages();
-    }
-
-    abstract protected function validationRules(): void;
+    abstract protected function rules(): array;
 }
