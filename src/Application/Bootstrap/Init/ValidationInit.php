@@ -21,7 +21,7 @@ class ValidationInit
     {
         return [
             'validator_factory' => \DI\factory(function () {
-                $loader = new FileLoader(new Filesystem(), App::rootPath('resources/validation/trans'));
+                $loader = new FileLoader(new Filesystem(), App::rootPath('resources/lang/'));
                 $translator = new Translator($loader, App::lang());
 
                 return new Factory($translator);
