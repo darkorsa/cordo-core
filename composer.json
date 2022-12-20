@@ -23,7 +23,7 @@
         "laminas/laminas-mail": "^2.10",
         "laminas/laminas-permissions-acl": "^2.5",
         "laminas/laminas-servicemanager": "^3.4",
-        "league/fractal": "^0.17.0",
+        "league/fractal": "^0.20.0",
         "league/plates": "^3.3",
         "league/tactician": "^1.0",
         "league/tactician-command-events": "^0.6.0",
