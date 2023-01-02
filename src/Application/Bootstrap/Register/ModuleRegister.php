@@ -10,11 +10,11 @@ use Cordo\Core\Application\App;
 use RecursiveDirectoryIterator;
 use Cordo\Core\Application\Config\ModuleParser;
 
-class ModuleRegister
+abstract class ModuleRegister
 {
-    private string $context;
+    protected string $context;
 
-    private string $module;
+    protected string $module;
 
     public function __construct(protected App $app, protected string $modulePath, protected string $namespace,)
     {
@@ -43,7 +43,7 @@ class ModuleRegister
         $this->loadCommands();
     }
 
-    private function getDefinitions(): array
+    protected function getDefinitions(): array
     {
         $path = $this->modulePath('Application/definitions.php');
 
@@ -54,7 +54,7 @@ class ModuleRegister
         return [];
     }
 
-    private function getHandlers(): array
+    protected function getHandlers(): array
     {
         $path = $this->modulePath('Application/handlers.php');
 
@@ -65,7 +65,7 @@ class ModuleRegister
         return [];
     }
 
-    private function loadRoutes(): void
+    protected function loadRoutes(): void
     {
         $className = "{$this->namespace}\UI\Http\Route\\{$this->module}Routes";
 
@@ -81,7 +81,7 @@ class ModuleRegister
         $register->register();
     }
 
-    private function loadConfigs(): void
+    protected function loadConfigs(): void
     {
         $path = $this->modulePath('Application/config/');
 
@@ -94,7 +94,7 @@ class ModuleRegister
         $this->app->config->merge(new Config($path, $configParser));
     }
 
-    private function loadTranslations(): void
+    protected function loadTranslations(): void
     {
         $translationsPath = $this->modulePath('/UI/trans');
 
@@ -120,7 +120,7 @@ class ModuleRegister
         }
     }
 
-    private function loadListeners(): void
+    protected function loadListeners(): void
     {
         $className = "{$this->namespace}\Application\Event\Register\\{$this->module}Listeners";;
 
@@ -135,7 +135,7 @@ class ModuleRegister
         ))->register();
     }
 
-    private function loadViews(): void
+    protected function loadViews(): void
     {
         $viewsPath = $this->modulePath('/UI/views');
 
@@ -144,7 +144,7 @@ class ModuleRegister
         }
     }
 
-    private function loadAclRules(): void
+    protected function loadAclRules(): void
     {
         $className = "{$this->namespace}\Application\Acl\{$this->module}Acl";
 
@@ -156,7 +156,7 @@ class ModuleRegister
         $register->register();
     }
 
-    private function loadCommands(): void
+    protected function loadCommands(): void
     {
         $commandsPath = $this->modulePath('/UI/Console/commands.php');
 
@@ -171,12 +171,12 @@ class ModuleRegister
         }, $commands);
     }
 
-    private function modulePath(string $path): string
+    protected function modulePath(string $path): string
     {
         return $this->modulePath . $path;
     }
 
-    private function resource(): string
+    protected function resource(): string
     {
         return strtolower("{$this->context}_{$this->module}");
     }
