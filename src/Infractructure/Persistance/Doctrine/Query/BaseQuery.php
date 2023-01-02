@@ -25,7 +25,7 @@ abstract class BaseQuery
 
     protected function column(QueryBuilder $queryBuilder, ?QueryBuilderFilter $filter = null): string
     {
-        $this->filter($filter, $queryBuilder);
+        $this->filter($filter, $queryBuilder, true);
 
         return (string) $this->connection->fetchOne($queryBuilder->getSQL(), $queryBuilder->getParameters());
     }
@@ -60,10 +60,10 @@ abstract class BaseQuery
         return $collection;
     }
 
-    protected function filter(?QueryBuilderFilter $queryFilter, QueryBuilder $queryBuilder)
+    protected function filter(?QueryBuilderFilter $queryFilter, QueryBuilder $queryBuilder, bool $fetchOne = false)
     {
         if (!is_null($queryFilter)) {
-            $queryFilter->filter($queryBuilder);
+            $queryFilter->filter($queryBuilder, $fetchOne);
         }
     }
 }

@@ -4,9 +4,9 @@ namespace Cordo\Core\Application\Query;
 
 interface QueryFilterInterface
 {
-    public function addFilter(string $key, string $value): self;
+    public function addFilter(string $key, string|int|array $value): self;
 
-    public function getFilter(string $key): ?string;
+    public function getFilter(string $key): string|int|array|null;
 
     public function setSort(string $sortBy): self;
 

@@ -16,7 +16,7 @@ abstract class QueryBuilderFilter
         $this->queryFilter = $queryFilter;
     }
 
-    public function filter(QueryBuilder $queryBuilder): void
+    public function filter(QueryBuilder $queryBuilder, bool $fetchOne): void
     {
         if (!$this->queryFilter) {
             return;
@@ -24,8 +24,10 @@ abstract class QueryBuilderFilter
 
         $this->doFilter($queryBuilder);
 
-        $this->pagination($queryBuilder);
-        $this->sorting($queryBuilder);
+        if (!$fetchOne) {
+            $this->pagination($queryBuilder);
+            $this->sorting($queryBuilder);
+        }
     }
 
     protected function pagination(QueryBuilder $queryBuilder): void

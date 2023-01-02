@@ -21,15 +21,19 @@ class QueryFilter implements QueryFilterInterface
         $this->filter = new stdClass();
     }
 
-    public function addFilter(string $key, string $value): self
+    public function addFilter(string $key, string|int|array $value): self
     {
         $this->filter->$key = $value;
 
         return $this;
     }
 
-    public function getFilter(string $key): ?string
+    public function getFilter(string $key, bool $required = false): string|int|array|null
     {
+        if ($required && !isset($this->filter->$key)) {
+            throw new \UnexpectedValueException("Filter '{$key}' is not defined");
+        }
+        
         return $this->filter->$key ?? null;
     }
 
