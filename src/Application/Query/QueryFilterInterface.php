@@ -6,7 +6,7 @@ interface QueryFilterInterface
 {
     public function addFilter(string $key, string|int|array $value): self;
 
-    public function getFilter(string $key): string|int|array|null;
+    public function getFilter(string $key, bool $required = false): string|int|array|null;
 
     public function setSort(string $sortBy): self;
 

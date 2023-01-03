@@ -51,13 +51,13 @@ abstract class QueryBuilderFilter
         }
     }
 
-    protected function getFilter(string $key)
+    protected function getFilter(string $key, bool $required = false)
     {
         if (!$this->queryFilter) {
             return null;
         }
 
-        return $this->queryFilter->getFilter($key);
+        return $this->queryFilter->getFilter($key, $required);
     }
 
     abstract protected function doFilter(QueryBuilder $queryBuilder): void;
