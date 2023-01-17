@@ -19,7 +19,8 @@ class MailerFactory
                     $smtp['host'],
                     $smtp['port'],
                     $smtp['username'],
-                    $smtp['password']
+                    $smtp['password'],
+                    $smtp['encryption'],
                 );
             default:
                 throw new InvalidArgumentException("Unknown mailer driver: " . $config['driver']);

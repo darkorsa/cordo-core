@@ -18,12 +18,15 @@ class SmtpMailer implements MailerInterface
 
     private $password;
 
-    public function __construct(string $host, string $port, string $username, string $password)
+    private $encryption;
+
+    public function __construct(string $host, string $port, string $username, string $password, string $encryption)
     {
         $this->host     = $host;
         $this->port     = $port;
         $this->username = $username;
         $this->password = $password;
+        $this->encryption = $encryption;
     }
 
     public function send(Message $message): void
@@ -36,6 +39,7 @@ class SmtpMailer implements MailerInterface
             'connection_config' => [
                 'username' => $this->username,
                 'password' => $this->password,
+                'ssl' => $this->encryption,
             ],
         ]);
 
