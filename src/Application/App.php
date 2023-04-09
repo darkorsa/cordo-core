@@ -83,6 +83,11 @@ class App
         return self::$app->config->get('app.environment') == Env::DEV();
     }
 
+    public function has(string $dependency): bool
+    {
+        return $this->container->has($dependency);
+    }
+
     public function __get(string $property): mixed
     {
         if (property_exists($this, $property)) {

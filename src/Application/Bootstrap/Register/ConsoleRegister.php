@@ -21,13 +21,16 @@ class ConsoleRegister
 
     public function register(): void
     {
-        $helperSet = new HelperSet([
-            new FormatterHelper(),
-            new DebugFormatterHelper(),
-            new ProcessHelper(),
-            new QuestionHelper(),
-            'db' => new ConnectionHelper($this->app->connection),
-        ]);
+        $helpers = [];
+        $helpers[] = new FormatterHelper();
+        $helpers[] = new DebugFormatterHelper();
+        $helpers[] = new ProcessHelper();
+        $helpers[] = new QuestionHelper();
+        if ($this->app->has('connection')) {
+            $helpers['db'] = new ConnectionHelper($this->app->connection);
+        }
+        
+        $helperSet = new HelperSet($helpers);
 
         $application = new Application();
         $application->setHelperSet($helperSet);
