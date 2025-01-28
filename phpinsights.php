@@ -50,11 +50,9 @@ return [
         NunoMaduro\PhpInsights\Domain\Insights\ForbiddenDefineFunctions::class,
         NunoMaduro\PhpInsights\Domain\Insights\ForbiddenNormalClasses::class,
         NunoMaduro\PhpInsights\Domain\Insights\ForbiddenTraits::class,
-        SlevomatCodingStandard\Sniffs\Classes\UnusedPrivateElementsSniff::class,
         SlevomatCodingStandard\Sniffs\Classes\ModernClassNameReferenceSniff::class,
         SlevomatCodingStandard\Sniffs\ControlStructures\DisallowShortTernaryOperatorSniff::class,
         SlevomatCodingStandard\Sniffs\TypeHints\DeclareStrictTypesSniff::class,
-        SlevomatCodingStandard\Sniffs\TypeHints\TypeHintDeclarationSniff::class,
         SlevomatCodingStandard\Sniffs\Classes\SuperfluousInterfaceNamingSniff::class,
         SlevomatCodingStandard\Sniffs\Classes\SuperfluousAbstractClassNamingSniff::class,
         SlevomatCodingStandard\Sniffs\Classes\SuperfluousExceptionNamingSniff::class,
@@ -72,9 +70,6 @@ return [
             'lineLimit' => 120,
             'absoluteLineLimit' => 120,
             'ignoreComments' => true,
-        ],
-        ObjectCalisthenics\Sniffs\Files\FunctionLengthSniff::class => [
-            'maxLength' => 100,
         ],
         NunoMaduro\PhpInsights\Domain\Insights\CyclomaticComplexityIsHigh::class => [
             'maxComplexity' => 10,

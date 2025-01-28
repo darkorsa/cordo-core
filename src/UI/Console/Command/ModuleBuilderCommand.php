@@ -8,17 +8,18 @@ use RecursiveIteratorIterator;
 use Cordo\Core\Application\App;
 use RecursiveDirectoryIterator;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
+#[AsCommand(name: 'core:module-builder')]
 class ModuleBuilderCommand extends Command
 {
     private const DEFAULT_ARCHIVE = 'CRUDModule.zip';
-
-    protected static $defaultName = 'core:module-builder';
 
     protected $output;
 
@@ -56,6 +57,7 @@ class ModuleBuilderCommand extends Command
             exit;
         }
 
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
             "Should I proceed with creating module {$moduleName} in {$context} context? (y/n) ",
