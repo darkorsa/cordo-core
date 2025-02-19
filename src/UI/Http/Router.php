@@ -20,7 +20,7 @@ class Router
 
     private $routes = [];
 
-    public function addMiddleware(MiddlewareInterface $middleware): void
+    public function addMiddleware(MiddlewareInterface|array $middleware): void
     {
         $this->middlewares[] = $middleware;
     }
@@ -90,6 +90,15 @@ class Router
 
     private function processMiddlewares(array $middlewares, ServerRequestInterface $request): ResponseInterface
     {
+        $middlewares = array_map(static function ($middleware) {
+            if (is_array($middleware)) {
+                [$className, $params] = $middleware;
+                return new $className(...$params);
+            } else {
+                return $middleware;
+            }
+        }, $middlewares);
+
         $relay = new Relay($middlewares, static function ($entry) {
             return is_string($entry) ? new $entry() : $entry;
         });
