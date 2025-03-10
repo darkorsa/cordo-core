@@ -15,8 +15,7 @@ final class QueueMiddleware implements Middleware
     public function __construct(
         private QueueManager $queue,
         private string $connection
-    ) {
-    }
+    ) {}
 
     /**
      * {@inheritdoc}
@@ -25,7 +24,11 @@ final class QueueMiddleware implements Middleware
     {
         if ($command instanceof QueueMessageInterface && !$command->isOnQueue()) {
             $command->pushOnQueue();
-            $this->queue->connection($this->connection)->push(QueueHandler::class, serialize($command));
+            $this->queue->connection($this->connection)->push(
+                QueueHandler::class,
+                serialize($command),
+                $command->getQueue()
+            );
             return;
         }
 

@@ -6,7 +6,14 @@ namespace Cordo\Core\Application\Queue;
 
 abstract class QueueMessage implements QueueMessageInterface
 {
+    protected string $queue = 'default';
+
     protected bool $onQueue = false;
+
+    public function getQueue(): string
+    {
+        return $this->queue;
+    }
 
     public function isOnQueue(): bool
     {
