@@ -11,12 +11,16 @@ class QueueHandler
 {
     public function __construct(
         private ContainerInterface $container
-    ) {
-    }
+    ) {}
 
     public function fire(Job $job, string $command): void
     {
-        $this->container->get('command_bus')->handle(unserialize($command));
-        $job->delete();
+        try {
+            $this->container->get('command_bus')->handle(unserialize($command));
+            $job->delete();
+        } catch (\Throwable $e) {
+            $this->container->get('error_reporter')->report($e);
+            $job->fail();
+        }
     }
 }

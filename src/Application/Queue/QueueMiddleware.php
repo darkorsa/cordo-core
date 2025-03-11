@@ -22,7 +22,10 @@ final class QueueMiddleware implements Middleware
      */
     public function execute($command, callable $next)
     {
-        if ($command instanceof QueueMessageInterface && !$command->isOnQueue()) {
+        if ($command instanceof QueueMessageInterface) {
+            if ($command->isOnQueue()) {
+                return;
+            }
             $command->pushOnQueue();
             $this->queue->connection($this->connection)->push(
                 QueueHandler::class,

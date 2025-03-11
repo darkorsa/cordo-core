@@ -22,9 +22,7 @@ use Cordo\Core\Application\Bootstrap\Laravel\ExceptionHandler;
 
 class LaravelRegister
 {
-    public function __construct(private App $app)
-    {
-    }
+    public function __construct(private App $app) {}
 
     public function register(): void
     {
@@ -48,6 +46,15 @@ class LaravelRegister
         });
         $app->singleton('db.transactions', function ($app) {
             return new DatabaseTransactionsManager;
+        });
+        $app->singleton('log', function ($app) {
+            // Create new writer instance with dependencies
+            $log = new \Illuminate\Log\Logger(new \Monolog\Logger('App Logger'));
+
+            // Setup log file location
+            $log->pushHandler(new \Monolog\Handler\StreamHandler(App::rootPath('storage/logs/error.log')));
+
+            return $log;
         });
 
         $this->queues($app);
