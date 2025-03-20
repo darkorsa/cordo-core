@@ -4,14 +4,11 @@ namespace Cordo\Core\UI\Console\Command;
 
 use Cordo\Core\Application\App;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
-use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
 
 #[AsCommand(name: 'core:init')]
 class InitCommand extends BaseConsoleCommand
@@ -24,7 +21,13 @@ class InitCommand extends BaseConsoleCommand
             ->setDescription('Initialize app')
             ->setHelp('Creates neccessary db tables and functions')
             ->addOption(
-                'withUuid',
+                'withMysqlUuid',
+                null,
+                InputOption::VALUE_NONE,
+                'Create Uuid DB helper functions'
+            )
+            ->addOption(
+                'withPgsqlUuid',
                 null,
                 InputOption::VALUE_NONE,
                 'Create Uuid DB helper functions'
@@ -41,40 +44,45 @@ class InitCommand extends BaseConsoleCommand
     {
         $em = $this->container->get('entity_manager');
 
-        $helperSet = new HelperSet(array(
-            'db' => new ConnectionHelper($em->getConnection()),
-            'em' => new EntityManagerHelper($em)
-        ));
-
-        $command = $this->getApplication()->find('dbal:import');
-        $command->setHelperSet($helperSet);
+        $command = $this->getApplication()->find('dbal:run-sql');
 
         if ($input->getOption('withOAuth')) {
-            $this->importOauthSql($command, $output);
+            $this->importOAuth($command, $output);
         }
 
-        if ($input->getOption('withUuid')) {
-            $this->importUuidSql($command, $output);
+        if ($input->getOption('withMysqlUuid')) {
+            $this->importUuidMysql($command, $output);
+        }
+
+        if ($input->getOption('withPgsqlUuid')) {
+            $this->importUuidPgsql($command, $output);
         }
 
         return 0;
     }
 
-    private function importOauthSql(Command $command, $output)
+    private function importOAuth(Command $command, $output)
     {
         $arguments = [
-            'command' => 'dbal:import',
-            'file' => App::rootPath('resources/database/sql/oauth.sql'),
+            'sql' => file_get_contents(App::rootPath('resources/database/sql/oauth.sql')),
         ];
 
         return $command->run(new ArrayInput($arguments), $output);
     }
 
-    private function importUuidSql(Command $command, $output)
+    private function importUuidMysql(Command $command, $output)
     {
         $arguments = [
-            'command' => 'dbal:import',
-            'file' => App::rootPath('resources/database/sql/uuid.sql'),
+            'sql' => file_get_contents(App::rootPath('resources/database/sql/uuid.sql')),
+        ];
+
+        return $command->run(new ArrayInput($arguments), $output);
+    }
+
+    private function importUuidPgsql(Command $command, $output)
+    {
+        $arguments = [
+            'sql' => file_get_contents(App::rootPath('resources/database/sql/uuid-pgsql.sql')),
         ];
 
         return $command->run(new ArrayInput($arguments), $output);

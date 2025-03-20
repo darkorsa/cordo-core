@@ -9,6 +9,8 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 use Cordo\Core\Application\App;
 use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\DriverManager;
+use Ramsey\Uuid\Doctrine\UuidType;
 use Psr\Container\ContainerInterface;
 
 class DatabaseInit
@@ -22,8 +24,8 @@ class DatabaseInit
     {
         $dbParams = self::getDbParams();
 
-        if (!Type::hasType('uuid_binary_ordered_time')) {
-            Type::addType('uuid_binary_ordered_time', 'Cordo\Core\SharedKernel\Uuid\Doctrine\UuidBinaryOrderedTimeType');
+        if (!Type::hasType('uuid')) {
+            Type::addType('uuid', UuidType::class);
         }
 
         $config = ORMSetup::createXMLMetadataConfiguration(
@@ -33,11 +35,12 @@ class DatabaseInit
         );
         $config->setAutoGenerateProxyClasses(App::isDevelopment());
 
-        $entityManager = EntityManager::create($dbParams, $config);
+        $connection = DriverManager::getConnection( $dbParams);
+
+        $entityManager = new EntityManager($connection, $config);
         $entityManager
             ->getConnection()
-            ->getDatabasePlatform()
-            ->registerDoctrineTypeMapping('uuid_binary_ordered_time', 'binary');
+            ->getDatabasePlatform();
 
         return $entityManager;
     }

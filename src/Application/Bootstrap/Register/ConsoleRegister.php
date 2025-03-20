@@ -10,7 +10,6 @@ use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
-use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 
 class ConsoleRegister
@@ -26,14 +25,9 @@ class ConsoleRegister
         $helpers[] = new DebugFormatterHelper();
         $helpers[] = new ProcessHelper();
         $helpers[] = new QuestionHelper();
-        if ($this->app->has('connection')) {
-            $helpers['db'] = new ConnectionHelper($this->app->connection);
-        }
         
-        $helperSet = new HelperSet($helpers);
-
         $application = new Application();
-        $application->setHelperSet($helperSet);
+        $application->setHelperSet(new HelperSet($helpers));
 
         $this->app->container->set('console', $application);
     }
