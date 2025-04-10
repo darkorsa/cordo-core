@@ -35,7 +35,7 @@ class DatabaseInit
         );
         $config->setAutoGenerateProxyClasses(App::isDevelopment());
 
-        $connection = DriverManager::getConnection( $dbParams);
+        $connection = DriverManager::getConnection($dbParams);
 
         $entityManager = new EntityManager($connection, $config);
         $entityManager
@@ -61,14 +61,21 @@ class DatabaseInit
             }
         }
 
+        if (App::config()->get('app.oauth') === true) {
+            $path = dirname(__FILE__) . '/../../../Infractructure/Persistance/Doctrine/ORM/Metadata/OAuth';
+            if (file_exists($path)) {
+                $paths[] = realpath($path);
+            }
+        }
+
         return $paths;
     }
 
     private static function getDefinitions(): array
     {
         return [
-            'entity_manager' => \DI\factory(static fn () => DatabaseInit::initDB()),
-            'db_config' => \DI\factory(static fn () => DatabaseInit::getDbParams()),
+            'entity_manager' => \DI\factory(static fn() => DatabaseInit::initDB()),
+            'db_config' => \DI\factory(static fn() => DatabaseInit::getDbParams()),
             'connection' => \DI\factory(static function (ContainerInterface $c) {
                 return $c->get('entity_manager')->getConnection();
             }),
