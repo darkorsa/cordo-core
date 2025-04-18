@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cordo\Core\Application\Bootstrap\Register;
 
+use Monolog\Level;
 use Monolog\Logger;
 use Cordo\Core\Application\App;
 use League\Tactician\CommandBus;
@@ -21,9 +22,7 @@ use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
 
 class CommandBusRegister
 {
-    public function __construct(private App $app, private array $handlers)
-    {
-    }
+    public function __construct(private App $app, private array $handlers) {}
 
     public function register(): void
     {
@@ -33,11 +32,14 @@ class CommandBusRegister
             new InvokeInflector()
         );
 
-        $commandLogger = new Logger('command');
-        $commandLogger->pushHandler(new StreamHandler($this->app->rootPath('logs/command.log'), Logger::DEBUG));
 
         $middleware = [];
-        $middleware[] = new LoggerMiddleware(new ClassNameFormatter(), $commandLogger);
+        if ($this->app->config->get('app.log_commands')) {
+            $commandLogger = new Logger('command');
+            $commandLogger->pushHandler(new StreamHandler($this->app->rootPath('logs/command.log'), Level::Debug));
+
+            $middleware[] = new LoggerMiddleware(new ClassNameFormatter(), $commandLogger);
+        }
         $middleware[] = new LockingMiddleware();
         if ($this->app->has('entity_manager')) {
             $middleware[] = new TransactionMiddleware($this->app->entity_manager);
@@ -45,7 +47,7 @@ class CommandBusRegister
         $middleware[] = new QueueMiddleware($this->app->laravel['queue'], $this->app->config->get('queue.default'));
         $middleware[] = new EventMiddleware($this->app->emitter);
         $middleware[] = $commandHandlerMiddleware;
-        
+
         $this->app->container->set('command_bus', new CommandBus($middleware));
         $this->app->container->set('handlers_map', $this->handlers);
     }
