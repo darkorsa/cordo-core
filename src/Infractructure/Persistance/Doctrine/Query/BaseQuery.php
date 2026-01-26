@@ -11,7 +11,7 @@ use Cordo\Core\Application\Exception\ResourceNotFoundException;
 
 abstract class BaseQuery
 {
-    protected $connection;
+    protected Connection $connection;
 
     public function __construct(Connection $connection)
     {
@@ -27,14 +27,22 @@ abstract class BaseQuery
     {
         $this->filter($filter, $queryBuilder, true);
 
-        return (string) $this->connection->fetchOne($queryBuilder->getSQL(), $queryBuilder->getParameters());
+        return (string) $this->connection->fetchOne(
+            $queryBuilder->getSQL(),
+            $queryBuilder->getParameters(),
+            $queryBuilder->getParameterTypes()
+        );
     }
 
     protected function assoc(QueryBuilder $queryBuilder, ?QueryBuilderFilter $filter = null): array
     {
         $this->filter($filter, $queryBuilder);
 
-        $return = $this->connection->fetchAssociative($queryBuilder->getSQL(), $queryBuilder->getParameters());
+        $return = $this->connection->fetchAssociative(
+            $queryBuilder->getSQL(),
+            $queryBuilder->getParameters(),
+            $queryBuilder->getParameterTypes()
+        );
 
         if (!$return) {
             throw new ResourceNotFoundException("Cannot get resource");
@@ -47,7 +55,11 @@ abstract class BaseQuery
     {
         $this->filter($filter, $queryBuilder);
 
-        return $this->connection->fetchAllAssociative($queryBuilder->getSQL(), $queryBuilder->getParameters());
+        return $this->connection->fetchAllAssociative(
+            $queryBuilder->getSQL(),
+            $queryBuilder->getParameters(),
+            $queryBuilder->getParameterTypes()
+        );
     }
 
     protected function createCollection(array $result, string $view): ArrayCollection
@@ -60,7 +72,7 @@ abstract class BaseQuery
         return $collection;
     }
 
-    protected function filter(?QueryBuilderFilter $queryFilter, QueryBuilder $queryBuilder, bool $fetchOne = false)
+    protected function filter(?QueryBuilderFilter $queryFilter, QueryBuilder $queryBuilder, bool $fetchOne = false): void
     {
         if (!is_null($queryFilter)) {
             $queryFilter->filter($queryBuilder, $fetchOne);
