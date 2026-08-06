@@ -16,6 +16,7 @@ use Whoops\Handler\PrettyPageHandler;
 use Cordo\Core\Application\Error\Handler\EmailErrorHandler;
 use Cordo\Core\Application\Error\Handler\LoggerErrorHandler;
 use Cordo\Core\Application\Error\Handler\PrettyErrorHandler;
+use Cordo\Core\Application\Error\Handler\RollbarErrorHandler;
 use Cordo\Core\Infractructure\Mailer\ZendMail\MailerFactory;
 
 class ErrorHandlerFactory
@@ -57,7 +58,7 @@ class ErrorHandlerFactory
 
     private static function rollbar(Config $config): ErrorHandlerInterface
     {
-        return new LoggerErrorHandler(new RollbarLogger($config->get('error')['channels']['rollbar']));
+        return new RollbarErrorHandler(new RollbarLogger($config->get('error')['channels']['rollbar']));
     }
 
     private static function verbose(Config $config): ErrorHandlerInterface
