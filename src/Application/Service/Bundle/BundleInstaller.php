@@ -4,12 +4,12 @@ namespace Cordo\Core\Application\Service\Bundle;
 
 use SplFileInfo;
 use FilesystemIterator;
-use Doctrine\ORM\ORMSetup;
 use RecursiveIteratorIterator;
 use Cordo\Core\Application\App;
 use Doctrine\ORM\EntityManager;
 use RecursiveDirectoryIterator;
 use Doctrine\ORM\Tools\SchemaTool;
+use Cordo\Core\Application\Bootstrap\Init\DatabaseInit;
 
 class BundleInstaller
 {
@@ -86,7 +86,7 @@ class BundleInstaller
 
     public function createSchema(...$domains)
     {
-        $config = ORMSetup::createXMLMetadataConfiguration([
+        $config = DatabaseInit::createConfig([
             "{$this->destPath}/Users/Infrastructure/Persistance/Doctrine/ORM/Metadata",
         ]);
 

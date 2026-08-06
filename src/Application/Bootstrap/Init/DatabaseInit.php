@@ -4,17 +4,25 @@ declare(strict_types=1);
 
 namespace Cordo\Core\Application\Bootstrap\Init;
 
-use Doctrine\ORM\ORMSetup;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Type;
 use Cordo\Core\Application\App;
-use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Ramsey\Uuid\Doctrine\UuidType;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
+use Ramsey\Uuid\Doctrine\UuidType;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
 class DatabaseInit
 {
+    private const PROXY_DIR = 'storage/cache/doctrine/proxies';
+
+    private const METADATA_CACHE_DIR = 'storage/cache/doctrine/metadata';
+
     public static function init(): array
     {
         return self::getDefinitions();
@@ -28,21 +36,45 @@ class DatabaseInit
             Type::addType('uuid', UuidType::class);
         }
 
-        $config = ORMSetup::createXMLMetadataConfiguration(
-            self::getPaths(),
-            App::isDevelopment(),
-            App::rootPath('cache/doctrine/')
-        );
-        $config->setAutoGenerateProxyClasses(App::isDevelopment());
-
         $connection = DriverManager::getConnection($dbParams);
 
-        $entityManager = new EntityManager($connection, $config);
+        $entityManager = new EntityManager($connection, self::createConfig(self::getPaths()));
         $entityManager
             ->getConnection()
             ->getDatabasePlatform();
 
         return $entityManager;
+    }
+
+    /**
+     * @param string[] $paths
+     */
+    public static function createConfig(array $paths): Configuration
+    {
+        $config = ORMSetup::createXMLMetadataConfiguration(
+            $paths,
+            App::isDevelopment(),
+            App::rootPath(self::PROXY_DIR),
+            self::createCache()
+        );
+        // metadata and query caches are shared, results must not end up in the file based one
+        $config->setResultCache(new ArrayAdapter());
+        $config->setAutoGenerateProxyClasses(App::isDevelopment());
+
+        return $config;
+    }
+
+    /**
+     * Must always be passed to ORMSetup explicitly - left to itself it picks an adapter
+     * by scanning loaded extensions and connects to a local Redis or Memcached.
+     */
+    private static function createCache(): CacheItemPoolInterface
+    {
+        if (App::isDevelopment()) {
+            return new ArrayAdapter();
+        }
+
+        return new PhpFilesAdapter('doctrine', 0, App::rootPath(self::METADATA_CACHE_DIR));
     }
 
     public static function getDbParams(): array
