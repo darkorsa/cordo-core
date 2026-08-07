@@ -4,11 +4,18 @@ declare(strict_types=1);
 
 namespace Cordo\Core\Infractructure\Persistance\Doctrine\Query;
 
+use InvalidArgumentException;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Cordo\Core\Application\Query\QueryFilterInterface;
 
 abstract class QueryBuilderFilter
 {
+    /**
+     * Column name accepted from user input. addOrderBy() pastes its argument into SQL
+     * without escaping, so only a plain identifier is allowed through.
+     */
+    private const SORT_COLUMN = '/^[A-Za-z0-9_]+$/';
+
     protected $queryFilter;
 
     public function __construct(?QueryFilterInterface $queryFilter)
@@ -41,12 +48,18 @@ abstract class QueryBuilderFilter
         }
     }
 
-    protected function sorting(QueryBuilder $queryBuilder): void
+    final protected function sorting(QueryBuilder $queryBuilder): void
     {
         foreach ($this->queryFilter->getSort() as $sort) {
+            $column = (string) $sort->column;
+
+            if (!preg_match(self::SORT_COLUMN, $column)) {
+                throw new InvalidArgumentException("Invalid sort column: '{$column}'");
+            }
+
             $queryBuilder->addOrderBy(
-                $sort->column,
-                $sort->direction
+                $queryBuilder->getConnection()->quoteIdentifier($column),
+                $sort->direction === 'DESC' ? 'DESC' : 'ASC'
             );
         }
     }
