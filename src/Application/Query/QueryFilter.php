@@ -110,9 +110,15 @@ class QueryFilter implements QueryFilterInterface
         $sorts = explode(',', $sortBy);
 
         foreach ($sorts as $sort) {
+            $sort = trim($sort);
+
+            if ($sort === '' || $sort === '-') {
+                continue;
+            }
+
             $queryFilter->sort[] = (object) [
-                'direction' => $sort[0] == '-' ? 'DESC' : 'ASC',
-                'column' => trim($sort, '-')
+                'direction' => str_starts_with($sort, '-') ? 'DESC' : 'ASC',
+                'column' => ltrim($sort, '-')
             ];
         }
     }
