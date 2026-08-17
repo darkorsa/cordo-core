@@ -12,9 +12,11 @@ abstract class QueryBuilderFilter
 {
     /**
      * Column name accepted from user input. addOrderBy() pastes its argument into SQL
-     * without escaping, so only a plain identifier is allowed through.
+     * without escaping, so only a plain identifier is allowed through - optionally
+     * qualified with a table/alias prefix (table.column), which quoteIdentifier()
+     * quotes segment by segment.
      */
-    private const SORT_COLUMN = '/^[A-Za-z0-9_]+$/';
+    private const SORT_COLUMN = '/^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)?$/';
 
     protected $queryFilter;
 
