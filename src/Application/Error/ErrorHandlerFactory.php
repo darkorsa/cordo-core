@@ -67,6 +67,13 @@ class ErrorHandlerFactory
             ? new PlainTextHandler()
             : new PrettyPageHandler();
         $whoops = new Run();
+
+        // Whoops exits after rendering by default. Terminating is ErrorReporter's call,
+        // and it makes that call explicitly - otherwise Whoops quits inside report(),
+        // so exceptionHandler() never reaches http_response_code(500), and report()
+        // used as "log and carry on" kills the process, but only when debug is enabled.
+        $whoops->allowQuit(false);
+
         $whoops->pushHandler($prettyHandler);
 
         return new PrettyErrorHandler($whoops);
