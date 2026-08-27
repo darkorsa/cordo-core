@@ -43,16 +43,18 @@ class ErrorReporter implements ErrorReporterInterface
 
         $isFatal = in_array($code, self::ERRORS_TO_HANDLE, true);
 
-        $this->reportError($code, $message, $file, $line, $isFatal);
-
         // Warnings, notices and deprecations are recoverable: report, but keep going.
         // Exiting on them turns any library deprecation into a 500, and silently kills
         // long-running processes such as queue workers.
         if (!$isFatal) {
+            $this->reportError($code, $message, $file, $line, false);
+
             return true;
         }
 
-        http_response_code(500);
+        $this->sendServerErrorStatus();
+        $this->reportError($code, $message, $file, $line, true);
+
         exit;
     }
 
@@ -64,6 +66,8 @@ class ErrorReporter implements ErrorReporterInterface
             return;
         }
 
+        $this->sendServerErrorStatus();
+
         // Deliberately bypasses errorHandler(): the error already ended the process,
         // so error_reporting() must not suppress the report.
         $this->reportError(
@@ -74,8 +78,23 @@ class ErrorReporter implements ErrorReporterInterface
             true
         );
 
-        http_response_code(500);
         exit;
+    }
+
+    /**
+     * Reporting can write to the output - the verbose channel renders a Whoops page -
+     * and that sends the headers. The status therefore has to be set before reporting,
+     * and skipped entirely once anything has already been written to the client:
+     * http_response_code() would only raise "headers already sent", and that warning
+     * would then be reported on top of the error it was meant to describe.
+     */
+    private function sendServerErrorStatus(): void
+    {
+        if (headers_sent()) {
+            return;
+        }
+
+        http_response_code(500);
     }
 
     private function reportError(int $code, string $message, string $file, int $line, bool $isFatal): void
@@ -94,9 +113,10 @@ class ErrorReporter implements ErrorReporterInterface
 
     public function exceptionHandler(Throwable $exception): void
     {
+        $this->sendServerErrorStatus();
+
         $this->report($exception);
 
-        http_response_code(500);
         exit;
     }
 }
