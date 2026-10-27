@@ -15,10 +15,10 @@ use League\Tactician\Container\ContainerLocator;
 use Cordo\Core\Application\Queue\QueueMiddleware;
 use League\Tactician\CommandEvents\EventMiddleware;
 use League\Tactician\Handler\CommandHandlerMiddleware;
-use League\Tactician\Doctrine\ORM\TransactionMiddleware;
 use League\Tactician\Logger\Formatter\ClassNameFormatter;
 use League\Tactician\Handler\MethodNameInflector\InvokeInflector;
 use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
+use Cordo\Core\Infractructure\Persistance\Doctrine\TransactionMiddleware;
 
 class CommandBusRegister
 {
